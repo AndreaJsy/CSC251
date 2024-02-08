@@ -5,13 +5,17 @@
 #include <string.h>
 #include <stdlib.h>
 
+int foo() {
+    return 10;
+}
+
 int main() {
     struct timespec start, end;
     long long elapsedTime;
     char buffer[1024];
     int fd;
     const char* file_path = "./test_file.txt";
-    const char* data = "C";
+    const char* data = "CSC251";
     ssize_t bytes_written, bytes_read;
 
     // Measure getuid
@@ -19,21 +23,21 @@ int main() {
     getuid();
     clock_gettime(CLOCK_MONOTONIC, &end);
     elapsedTime = (end.tv_sec - start.tv_sec) * 1000000000LL + (end.tv_nsec - start.tv_nsec);
-    printf("getuid execution time: %lld nanoseconds\n", elapsedTime);
+    printf("getuid() execution time: %lld nanoseconds\n", elapsedTime);
 
     // Measure getppid
     clock_gettime(CLOCK_MONOTONIC, &start);
     getppid();
     clock_gettime(CLOCK_MONOTONIC, &end);
     elapsedTime = (end.tv_sec - start.tv_sec) * 1000000000LL + (end.tv_nsec - start.tv_nsec);
-    printf("getppid execution time: %lld nanoseconds\n", elapsedTime);
+    printf("getppid() execution time: %lld nanoseconds\n", elapsedTime);
 
     // Measure getcwd
     clock_gettime(CLOCK_MONOTONIC, &start);
     getcwd(buffer, sizeof(buffer));
     clock_gettime(CLOCK_MONOTONIC, &end);
     elapsedTime = (end.tv_sec - start.tv_sec) * 1000000000LL + (end.tv_nsec - start.tv_nsec);
-    printf("getcwd execution time: %lld nanoseconds\n", elapsedTime);
+    printf("getcwd() execution time: %lld nanoseconds\n", elapsedTime);
 
     // Setup and Measure write
     fd = open(file_path, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
@@ -50,7 +54,7 @@ int main() {
         exit(EXIT_FAILURE);
     }
     elapsedTime = (end.tv_sec - start.tv_sec) * 1000000000LL + (end.tv_nsec - start.tv_nsec);
-    printf("write execution time: %lld nanoseconds\n", elapsedTime);
+    printf("write() execution time: %lld nanoseconds\n", elapsedTime);
     close(fd);
 
     // Setup and Measure read
@@ -68,8 +72,16 @@ int main() {
         exit(EXIT_FAILURE);
     }
     elapsedTime = (end.tv_sec - start.tv_sec) * 1000000000LL + (end.tv_nsec - start.tv_nsec);
-    printf("read execution time: %lld nanoseconds\n", elapsedTime);
+    printf("read() execution time: %lld nanoseconds\n", elapsedTime);
     close(fd);
+
+    // Measure foo
+    clock_gettime(CLOCK_MONOTONIC, &start);
+    foo();
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    elapsedTime = (end.tv_sec - start.tv_sec) * 1000000000LL + (end.tv_nsec - start.tv_nsec);
+    printf("foo() execution time: %lld nanoseconds\n", elapsedTime);
+
 
     return 0;
 }
